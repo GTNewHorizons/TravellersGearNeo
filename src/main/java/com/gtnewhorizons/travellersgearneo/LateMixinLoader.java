@@ -19,6 +19,7 @@ public class LateMixinLoader implements ILateMixinLoader {
     @Override
     public List<String> getMixins(Set<String> loadedMods) {
         List<String> mixins = new ArrayList<>();
+        mixins.add("MixinSlotRestricted");
         if (FMLCommonHandler.instance().getSide().isClient()) {
             mixins.add("MixinKeyHandler_FixTPSLag");
         }
