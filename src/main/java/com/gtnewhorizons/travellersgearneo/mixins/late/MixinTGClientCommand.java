@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,25 +29,33 @@ public class MixinTGClientCommand {
                 && ((EntityPlayer) sender).worldObj.isRemote) {
             EntityPlayer player = (EntityPlayer) sender;
             if (args.length == 1) {
-                player.addChatMessage(new ChatComponentText("Usage: travellersgear bind {1,2,3}"));
+                player.addChatMessage(
+                        new ChatComponentText(EnumChatFormatting.RED + "Usage: travellersgear bind {1,2,3}"));
                 return;
             }
             int key = MathHelper.parseIntWithDefault(args[1], 0);
             if (key < 1 || key > 3) {
-                player.addChatMessage(new ChatComponentText("Usage: travellersgear bind {1,2,3}"));
+                player.addChatMessage(
+                        new ChatComponentText(EnumChatFormatting.RED + "Usage: travellersgear bind {1,2,3}"));
                 return;
             }
             ItemStack stack = player.getHeldItem();
             if (stack == null) {
-                player.addChatMessage(new ChatComponentText("You should hold in hand item you want to bind"));
+                player.addChatMessage(
+                        new ChatComponentText(
+                                EnumChatFormatting.RED + "You need to hold in your hand item you want to bind!"));
                 return;
             }
             if (stack.getItem() instanceof IActiveAbility) {
-                String code = Item.itemRegistry.getNameForObject(stack.getItem());
-                player.addChatMessage(new ChatComponentText("Bind " + code + " to key " + key));
-                ClientProxyHook.bindKey(key - 1, code);
+                String itemName = Item.itemRegistry.getNameForObject(stack.getItem());
+                player.addChatMessage(
+                        new ChatComponentText(
+                                EnumChatFormatting.GREEN + "Successfully binded " + itemName + " to key " + key));
+                ClientProxyHook.bindKey(key - 1, itemName);
             } else {
-                player.addChatMessage(new ChatComponentText("Item has no active ability"));
+                player.addChatMessage(
+                        new ChatComponentText(
+                                EnumChatFormatting.RED + "The item you are holding doesn't have any special ability"));
             }
         }
     }
