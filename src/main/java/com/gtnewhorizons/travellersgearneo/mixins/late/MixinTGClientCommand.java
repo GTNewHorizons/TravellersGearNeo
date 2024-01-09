@@ -14,10 +14,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.gtnewhorizons.travellersgearneo.hooks.ClientProxyHook;
+
 import travellersgear.api.IActiveAbility;
 import travellersgear.common.util.TGClientCommand;
-
-import com.gtnewhorizons.travellersgearneo.hooks.ClientProxyHook;
 
 @Mixin(TGClientCommand.class)
 public class MixinTGClientCommand {

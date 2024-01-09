@@ -24,10 +24,10 @@
 dependencies {
     // not necessary but usefull to test stuff with the "mantle of the raven"
     // downside is it adds like 10 mods including gregtech
-    // runtimeOnly("com.github.GTNewHorizons:WitchingGadgets:1.2.25-GTNH:dev")
+    // runtimeOnly("com.github.GTNewHorizons:WitchingGadgets:1.4.0-GTNH:dev")
 
-    runtimeOnly("com.github.GTNewHorizons:NotEnoughItems:2.3.27-GTNH:dev")
-    implementation("com.github.GTNewHorizons:Botania:1.9.15-GTNH:dev")
-    implementation("com.github.GTNewHorizons:Baubles:1.0.1.14:dev")
+    runtimeOnly("com.github.GTNewHorizons:NotEnoughItems:2.5.4-GTNH:dev")
+    implementation("com.github.GTNewHorizons:Botania:1.10.3-GTNH:dev")
+    implementation("com.github.GTNewHorizons:Baubles:1.0.3:dev")
     implementation("curse.maven:travellers-gear-224440:2262113")
 }

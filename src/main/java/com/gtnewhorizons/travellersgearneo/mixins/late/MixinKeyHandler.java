@@ -14,6 +14,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.gtnewhorizons.travellersgearneo.hooks.ClientProxyHook;
+
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.InputEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import travellersgear.TravellersGear;
 import travellersgear.client.ClientProxy;
 import travellersgear.client.KeyHandler;
@@ -23,15 +31,6 @@ import travellersgear.common.network.MessageActiveAbility;
 import travellersgear.common.network.MessageOpenGui;
 import travellersgear.common.network.MessageSlotSync;
 import travellersgear.common.network.old.PacketActiveAbility;
-
-import com.gtnewhorizons.travellersgearneo.hooks.ClientProxyHook;
-
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.InputEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @Mixin(value = KeyHandler.class)
 public class MixinKeyHandler {

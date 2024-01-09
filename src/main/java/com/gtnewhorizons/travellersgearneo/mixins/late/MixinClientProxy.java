@@ -7,12 +7,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.gtnewhorizons.travellersgearneo.hooks.ClientProxyHook;
+
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import travellersgear.client.ClientProxy;
 import travellersgear.client.handlers.CustomizeableGuiHandler;
 import travellersgear.common.CommonProxy;
-
-import com.gtnewhorizons.travellersgearneo.hooks.ClientProxyHook;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 @Mixin(value = ClientProxy.class)
 public class MixinClientProxy extends CommonProxy {
