@@ -50,6 +50,9 @@ public class MixinKeyHandler {
     @Shadow(remap = false)
     public boolean[] keyDown;
 
+    private boolean lastClosing;
+    private boolean lastOpening;
+
     private static final KeyBinding activeAbility1 = new KeyBinding(
             "TG.keybind.activeAbility1",
             Keyboard.KEY_NONE,
@@ -81,6 +84,16 @@ public class MixinKeyHandler {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void handleKeybinds(InputEvent.KeyInputEvent event) {
+        handleInput();
+    }
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void handleMousebinds(InputEvent.MouseInputEvent event) {
+        handleInput();
+    }
+
+    private void handleInput() {
         if (openInventory.isPressed()) {
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
             if (player == null) {
@@ -122,40 +135,59 @@ public class MixinKeyHandler {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void handleKeybindsOnTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().inGameHasFocus) {
-            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            if (player == null) {
-                return;
-            }
-            if (activeAbilitiesWheel.getIsKeyPressed() && !this.keyDown[1]
-                    && ActiveAbilityHandler.instance.buildActiveAbilityList(player).length > 0) {
-                if (abilityLock) {
-                    abilityLock = false;
+        if (event.phase != TickEvent.Phase.END) return;
+
+        if (Minecraft.getMinecraft().inGameHasFocus) {
+            if (abilityLock == false) {
+                if (activeAbilitiesWheel.getIsKeyPressed()) {
+                    if (!lastClosing) {
+                        openAbilityWheel();
+                        lastOpening = true;
+                        lastClosing = false;
+                    }
                 } else {
-                    if (abilityRadial < 1.0F) {
-                        abilityRadial += ClientProxy.activeAbilityGuiSpeed;
-                    }
-                    if (abilityRadial > 1.0F) {
-                        abilityRadial = 1.0F;
-                    }
-                    if (abilityRadial >= 1.0F) {
-                        abilityLock = true;
-                        this.keyDown[1] = true;
-                    }
-                }
-            } else {
-                if (this.keyDown[1]) {
-                    this.keyDown[1] = false;
-                }
-                if (!abilityLock) {
-                    if (abilityRadial > 0.0F) {
-                        abilityRadial -= ClientProxy.activeAbilityGuiSpeed;
-                    }
-                    if (abilityRadial < 0.0F) {
-                        abilityRadial = 0.0F;
-                    }
+                    closeAbilityWheel();
+                    lastOpening = false;
+                    lastClosing = false;
                 }
             }
+        } else {
+            if (abilityLock == true) {
+                if (activeAbilitiesWheel.getIsKeyPressed()) {
+                    if (!lastOpening) {
+                        abilityLock = false;
+                        lastOpening = false;
+                        lastClosing = true;
+                    }
+                } else {
+                    lastOpening = false;
+                    lastClosing = false;
+                }
+            }
+        }
+    }
+
+    private void openAbilityWheel() {
+        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        if (player == null || ActiveAbilityHandler.instance.buildActiveAbilityList(player).length == 0) return;
+
+        if (abilityRadial < 1.0F) {
+            abilityRadial += ClientProxy.activeAbilityGuiSpeed;
+        }
+        if (abilityRadial > 1.0F) {
+            abilityRadial = 1.0F;
+        }
+        if (abilityRadial >= 1.0F) {
+            abilityLock = true;
+        }
+    }
+
+    private void closeAbilityWheel() {
+        if (abilityRadial > 0.0F) {
+            abilityRadial -= ClientProxy.activeAbilityGuiSpeed;
+        }
+        if (abilityRadial < 0.0F) {
+            abilityRadial = 0.0F;
         }
     }
 }
