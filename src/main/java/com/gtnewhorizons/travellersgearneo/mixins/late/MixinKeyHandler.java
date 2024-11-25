@@ -47,12 +47,6 @@ public class MixinKeyHandler {
     @Shadow(remap = false)
     public static KeyBinding activeAbilitiesWheel;
 
-    @Shadow(remap = false)
-    public boolean[] keyDown;
-
-    private boolean lastClosing;
-    private boolean lastOpening;
-
     private static final KeyBinding activeAbility1 = new KeyBinding(
             "TG.keybind.activeAbility1",
             Keyboard.KEY_NONE,
@@ -66,7 +60,7 @@ public class MixinKeyHandler {
             Keyboard.KEY_NONE,
             TravellersGear.MODNAME);
 
-    @Inject(method = "<init>", at = @At("TAIL"))
+    @Inject(method = "<init>", at = @At("TAIL"), remap = false)
     private void travellersgearneo$registerKeys(CallbackInfo ci) {
         ClientRegistry.registerKeyBinding(activeAbility1);
         ClientRegistry.registerKeyBinding(activeAbility2);
@@ -140,28 +134,9 @@ public class MixinKeyHandler {
         if (Minecraft.getMinecraft().inGameHasFocus) {
             if (abilityLock == false) {
                 if (activeAbilitiesWheel.getIsKeyPressed()) {
-                    if (!lastClosing) {
-                        openAbilityWheel();
-                        lastOpening = true;
-                        lastClosing = false;
-                    }
+                    openAbilityWheel();
                 } else {
                     closeAbilityWheel();
-                    lastOpening = false;
-                    lastClosing = false;
-                }
-            }
-        } else {
-            if (abilityLock == true) {
-                if (activeAbilitiesWheel.getIsKeyPressed()) {
-                    if (!lastOpening) {
-                        abilityLock = false;
-                        lastOpening = false;
-                        lastClosing = true;
-                    }
-                } else {
-                    lastOpening = false;
-                    lastClosing = false;
                 }
             }
         }
