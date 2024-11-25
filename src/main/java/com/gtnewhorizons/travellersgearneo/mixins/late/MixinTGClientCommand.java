@@ -30,27 +30,28 @@ public class MixinTGClientCommand {
             EntityPlayer player = (EntityPlayer) sender;
             if (args.length == 1) {
                 player.addChatMessage(
-                        new ChatComponentText(EnumChatFormatting.RED + "Usage: travellersgear bind {1,2,3}"));
+                        new ChatComponentText(EnumChatFormatting.RED + "Usage: /travellersgear bind {1,2,3}"));
                 return;
             }
             int key = MathHelper.parseIntWithDefault(args[1], 0);
             if (key < 1 || key > 3) {
                 player.addChatMessage(
-                        new ChatComponentText(EnumChatFormatting.RED + "Usage: travellersgear bind {1,2,3}"));
+                        new ChatComponentText(EnumChatFormatting.RED + "Usage: /travellersgear bind {1,2,3}"));
                 return;
             }
             ItemStack stack = player.getHeldItem();
             if (stack == null) {
                 player.addChatMessage(
                         new ChatComponentText(
-                                EnumChatFormatting.RED + "You need to hold in your hand item you want to bind!"));
+                                EnumChatFormatting.RED
+                                        + "You need to be holding the item you want to bind in your hand!"));
                 return;
             }
             if (stack.getItem() instanceof IActiveAbility) {
                 String itemName = Item.itemRegistry.getNameForObject(stack.getItem());
                 player.addChatMessage(
                         new ChatComponentText(
-                                EnumChatFormatting.GREEN + "Successfully binded " + itemName + " to key " + key));
+                                EnumChatFormatting.GREEN + "Successfully bound " + itemName + " to key " + key));
                 ClientProxyHook.bindKey(key - 1, itemName);
             } else {
                 player.addChatMessage(
