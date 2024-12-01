@@ -10,6 +10,7 @@ import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -47,30 +48,27 @@ public class MixinKeyHandler {
     @Shadow(remap = false)
     public static KeyBinding activeAbilitiesWheel;
 
-    @Shadow(remap = false)
-    public boolean[] keyDown;
-
-    private boolean lastClosing;
-    private boolean lastOpening;
-
-    private static final KeyBinding activeAbility1 = new KeyBinding(
+    @Unique
+    private static final KeyBinding travellersGearNeo$activeAbility1 = new KeyBinding(
             "TG.keybind.activeAbility1",
             Keyboard.KEY_NONE,
             TravellersGear.MODNAME);
-    private static final KeyBinding activeAbility2 = new KeyBinding(
+    @Unique
+    private static final KeyBinding travellersGearNeo$activeAbility2 = new KeyBinding(
             "TG.keybind.activeAbility2",
             Keyboard.KEY_NONE,
             TravellersGear.MODNAME);
-    private static final KeyBinding activeAbility3 = new KeyBinding(
+    @Unique
+    private static final KeyBinding travellersGearNeo$activeAbility3 = new KeyBinding(
             "TG.keybind.activeAbility3",
             Keyboard.KEY_NONE,
             TravellersGear.MODNAME);
 
-    @Inject(method = "<init>", at = @At("TAIL"))
+    @Inject(method = "<init>", at = @At("TAIL"), remap = false)
     private void travellersgearneo$registerKeys(CallbackInfo ci) {
-        ClientRegistry.registerKeyBinding(activeAbility1);
-        ClientRegistry.registerKeyBinding(activeAbility2);
-        ClientRegistry.registerKeyBinding(activeAbility3);
+        ClientRegistry.registerKeyBinding(travellersGearNeo$activeAbility1);
+        ClientRegistry.registerKeyBinding(travellersGearNeo$activeAbility2);
+        ClientRegistry.registerKeyBinding(travellersGearNeo$activeAbility3);
     }
 
     /**
@@ -96,38 +94,34 @@ public class MixinKeyHandler {
     private void handleInput() {
         if (openInventory.isPressed()) {
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            if (player == null) {
-                return;
-            }
+            if (player == null) return;
+
             boolean[] hidden = new boolean[CustomizeableGuiHandler.moveableInvElements.size()];
             for (int bme = 0; bme < hidden.length; ++bme) {
                 hidden[bme] = CustomizeableGuiHandler.moveableInvElements.get(bme).hideElement;
             }
             TravellersGear.packetHandler.sendToServer(new MessageSlotSync(player, hidden));
             TravellersGear.packetHandler.sendToServer(new MessageOpenGui(player, 0));
-        } else if (activeAbility1.isPressed()) {
+        } else if (travellersGearNeo$activeAbility1.isPressed()) {
             checkAbilityKey(0);
-        } else if (activeAbility2.isPressed()) {
+        } else if (travellersGearNeo$activeAbility2.isPressed()) {
             checkAbilityKey(1);
-        } else if (activeAbility3.isPressed()) {
+        } else if (travellersGearNeo$activeAbility3.isPressed()) {
             checkAbilityKey(2);
         }
     }
 
     private void checkAbilityKey(int i) {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        if (player == null) {
-            return;
-        }
+        if (player == null) return;
+
         final Object[][] gear = ActiveAbilityHandler.instance.buildActiveAbilityList(player);
-        if (gear.length > 0) {
-            for (Object[] ability : gear) {
-                ItemStack stack = (ItemStack) ability[0];
-                if (stack != null && ClientProxyHook.keyBindingsValues[i]
-                        .equals(Item.itemRegistry.getNameForObject(stack.getItem()))) {
-                    TravellersGear.packetHandler.sendToServer(new MessageActiveAbility(player, (Integer) ability[1]));
-                    PacketActiveAbility.performAbility(player, (Integer) ability[1]);
-                }
+        for (Object[] ability : gear) {
+            ItemStack stack = (ItemStack) ability[0];
+            if (stack != null && ClientProxyHook.keyBindingsValues[i]
+                    .equals(Item.itemRegistry.getNameForObject(stack.getItem()))) {
+                TravellersGear.packetHandler.sendToServer(new MessageActiveAbility(player, (Integer) ability[1]));
+                PacketActiveAbility.performAbility(player, (Integer) ability[1]);
             }
         }
     }
@@ -138,30 +132,11 @@ public class MixinKeyHandler {
         if (event.phase != TickEvent.Phase.END) return;
 
         if (Minecraft.getMinecraft().inGameHasFocus) {
-            if (abilityLock == false) {
+            if (!abilityLock) {
                 if (activeAbilitiesWheel.getIsKeyPressed()) {
-                    if (!lastClosing) {
-                        openAbilityWheel();
-                        lastOpening = true;
-                        lastClosing = false;
-                    }
+                    openAbilityWheel();
                 } else {
                     closeAbilityWheel();
-                    lastOpening = false;
-                    lastClosing = false;
-                }
-            }
-        } else {
-            if (abilityLock == true) {
-                if (activeAbilitiesWheel.getIsKeyPressed()) {
-                    if (!lastOpening) {
-                        abilityLock = false;
-                        lastOpening = false;
-                        lastClosing = true;
-                    }
-                } else {
-                    lastOpening = false;
-                    lastClosing = false;
                 }
             }
         }
