@@ -26,7 +26,7 @@ dependencies {
     // downside is it adds like 10 mods including gregtech
     // runtimeOnly("com.github.GTNewHorizons:WitchingGadgets:1.5.17-GTNH:dev")
 
-    runtimeOnly("com.github.GTNewHorizons:NotEnoughItems:2.6.46-GTNH:dev")
+    runtimeOnly("com.github.GTNewHorizons:NotEnoughItems:2.6.48-GTNH:dev")
     implementation("com.github.GTNewHorizons:Botania:1.11.5-GTNH:dev")
     implementation("com.github.GTNewHorizons:Baubles:1.0.4:dev")
     implementation("curse.maven:travellers-gear-224440:2262113")
